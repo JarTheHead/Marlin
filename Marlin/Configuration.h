@@ -489,9 +489,9 @@
   #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
                                   // is more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 
-  #define DEFAULT_Kp 15.16
-  #define DEFAULT_Ki 0.70
-  #define DEFAULT_Kd 82.00
+  #define DEFAULT_Kp 27.94
+  #define DEFAULT_Ki 2.66
+  #define DEFAULT_Kd 73.25
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
   // Creality Ender-3
@@ -533,7 +533,7 @@
  * heater. If your configuration is significantly different than this and you don't understand
  * the issues involved, don't use bed PID until someone else verifies that your hardware works.
  */
-//#define PIDTEMPBED
+#define PIDTEMPBED
 
 //#define BED_LIMIT_SWITCHING
 
