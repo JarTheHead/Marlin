@@ -1632,14 +1632,13 @@ void MarlinSettings::postprocess() {
     // Model predictive control
     //
     #if ENABLED(MPCTEMP)
-      HOTEND_LOOP()
-        EEPROM_WRITE(thermalManager.temp_hotend[e].constants);
+      HOTEND_LOOP() EEPROM_WRITE(thermalManager.temp_hotend[e].mpc);
     #endif
 
     //
     // Input Shaping
     ///
-    #if HAS_SHAPING
+    #if HAS_ZV_SHAPING
       #if ENABLED(INPUT_SHAPING_X)
         EEPROM_WRITE(stepper.get_shaping_frequency(X_AXIS));
         EEPROM_WRITE(stepper.get_shaping_damping_ratio(X_AXIS));
@@ -2627,8 +2626,7 @@ void MarlinSettings::postprocess() {
       //
       #if ENABLED(MPCTEMP)
       {
-        HOTEND_LOOP()
-          EEPROM_READ(thermalManager.temp_hotend[e].constants);
+        HOTEND_LOOP() EEPROM_READ(thermalManager.temp_hotend[e].mpc);
       }
       #endif
 
@@ -3416,22 +3414,22 @@ void MarlinSettings::reset() {
     static_assert(COUNT(_filament_heat_capacity_permm) == HOTENDS, "FILAMENT_HEAT_CAPACITY_PERMM must have HOTENDS items.");
 
     HOTEND_LOOP() {
-      MPC_t &constants = thermalManager.temp_hotend[e].constants;
-      constants.heater_power = _mpc_heater_power[e];
-      constants.block_heat_capacity = _mpc_block_heat_capacity[e];
-      constants.sensor_responsiveness = _mpc_sensor_responsiveness[e];
-      constants.ambient_xfer_coeff_fan0 = _mpc_ambient_xfer_coeff[e];
+      MPC_t &mpc = thermalManager.temp_hotend[e].mpc;
+      mpc.heater_power = _mpc_heater_power[e];
+      mpc.block_heat_capacity = _mpc_block_heat_capacity[e];
+      mpc.sensor_responsiveness = _mpc_sensor_responsiveness[e];
+      mpc.ambient_xfer_coeff_fan0 = _mpc_ambient_xfer_coeff[e];
       #if ENABLED(MPC_INCLUDE_FAN)
-        constants.fan255_adjustment = _mpc_ambient_xfer_coeff_fan255[e] - _mpc_ambient_xfer_coeff[e];
+        mpc.fan255_adjustment = _mpc_ambient_xfer_coeff_fan255[e] - _mpc_ambient_xfer_coeff[e];
       #endif
-      constants.filament_heat_capacity_permm = _filament_heat_capacity_permm[e];
+      mpc.filament_heat_capacity_permm = _filament_heat_capacity_permm[e];
     }
   #endif
 
   //
   // Input Shaping
   //
-  #if HAS_SHAPING
+  #if HAS_ZV_SHAPING
     #if ENABLED(INPUT_SHAPING_X)
       stepper.set_shaping_frequency(X_AXIS, SHAPING_FREQ_X);
       stepper.set_shaping_damping_ratio(X_AXIS, SHAPING_ZETA_X);
@@ -3692,7 +3690,7 @@ void MarlinSettings::reset() {
     //
     // Input Shaping
     //
-    TERN_(HAS_SHAPING, gcode.M593_report(forReplay));
+    TERN_(HAS_ZV_SHAPING, gcode.M593_report(forReplay));
 
     //
     // Linear Advance
