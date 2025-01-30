@@ -48,7 +48,7 @@
  */
 //#define FLASH_EEPROM_EMULATION
 #define I2C_EEPROM                                // EEPROM on I2C-0
-#define MARLIN_EEPROM_SIZE               0x10000  // 64K (CAT24C512)
+#define MARLIN_EEPROM_SIZE              0x10000U  // 64K (CAT24C512)
 
 //This its another option to emulate an EEPROM, but its more efficient to dont loose the data the first One.
 //#define SDCARD_EEPROM_EMULATION
@@ -281,7 +281,7 @@
 
     #ifndef BEEPER_PIN
       #define BEEPER_PIN             EXP1_01_PIN
-      #undef SPEAKER
+      #define NO_SPEAKER
     #endif
 
   #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
@@ -291,7 +291,7 @@
     //#define LCD_PINS_EN            EXP2_06_PIN  // SID (MOSI)
     //#define LCD_PINS_D4            EXP2_02_PIN  // SCK (CLK) clock
 
-  #elif BOTH(IS_NEWPANEL, PANEL_ONE)
+  #elif ALL(IS_NEWPANEL, PANEL_ONE)
 
     // TO TEST
     //#define LCD_PINS_RS            EXP1_02_PIN
@@ -327,7 +327,7 @@
 
     #else
 
-      #if EITHER(MKS_12864OLED, MKS_12864OLED_SSD1306)
+      #if ANY(MKS_12864OLED, MKS_12864OLED_SSD1306)
         // TO TEST
         //#define LCD_PINS_DC                 25  // Set as output on init
         //#define LCD_PINS_RS                 27  // Pull low for 1s to init
@@ -411,8 +411,9 @@
       //#define BTN_EN1                       47
       //#define BTN_EN2              EXP2_03_PIN
       //#define BTN_ENC                       32
-      //#define LCD_SDSS                    SDSS
+      //#define LCD_SDSS_PIN           SD_SS_PIN
       //#define KILL_PIN             EXP1_01_PIN
+      //#undef LCD_PINS_EN                        // not used, causes false pin conflict report
 
     #elif ENABLED(LCD_I2C_VIKI)
 
@@ -421,10 +422,10 @@
       //#define BTN_EN2              EXP2_05_PIN
       //#define BTN_ENC                       -1
 
-      //#define LCD_SDSS                    SDSS
+      //#define LCD_SDSS_PIN           SD_SS_PIN
       //#define SD_DETECT_PIN        EXP2_10_PIN
 
-    #elif EITHER(VIKI2, miniVIKI)
+    #elif ANY(VIKI2, miniVIKI)
 
       // TO TEST
       //#define DOGLCD_CS                     45
@@ -455,11 +456,11 @@
       //#define BTN_EN2              EXP1_06_PIN
       //#define BTN_ENC                       31
 
-      //#define LCD_SDSS                    SDSS
+      //#define LCD_SDSS_PIN           SD_SS_PIN
       //#define SD_DETECT_PIN        EXP2_10_PIN
       //#define KILL_PIN             EXP1_01_PIN
 
-    #elif EITHER(MKS_MINI_12864, FYSETC_MINI_12864)
+    #elif ANY(MKS_MINI_12864, FYSETC_MINI_12864)
 
       // TO TEST
       //#define BEEPER_PIN           EXP1_06_PIN
@@ -504,7 +505,7 @@
 
         //#define LCD_RESET_PIN               23  // Must be high or open for LCD to operate normally.
 
-        #if EITHER(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
+        #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
           #ifndef RGB_LED_R_PIN
             // TO TEST
             //#define RGB_LED_R_PIN           25
@@ -612,35 +613,14 @@
 #endif
 
 #if SD_CONNECTION_IS(ONBOARD)
-  #define SDSS                                83
+  #define SD_SS_PIN                           83
   #undef SD_DETECT_PIN
   #define SD_DETECT_PIN                       95
 #else
-  #define SDSS                       EXP2_04_PIN
+  #define SD_SS_PIN                  EXP2_04_PIN
 #endif
 
 #if HAS_TMC_UART
-
-  /**
-   * Address for the UART Configuration of the TMC2209. Override in Configuration files.
-   * To test TMC2209 Steppers enable TMC_DEBUG in Configuration_adv.h and test the M122 command with voltage on the steppers.
-   */
-  #ifndef X_SLAVE_ADDRESS
-    #define X_SLAVE_ADDRESS                 0b00
-  #endif
-  #ifndef Y_SLAVE_ADDRESS
-    #define Y_SLAVE_ADDRESS                 0b01
-  #endif
-  #ifndef Z_SLAVE_ADDRESS
-    #define Z_SLAVE_ADDRESS                 0b10
-  #endif
-  #ifndef E0_SLAVE_ADDRESS
-    #define E0_SLAVE_ADDRESS                0b11
-  #endif
-  #ifndef E1_SLAVE_ADDRESS
-    #define E1_SLAVE_ADDRESS                0b00
-  #endif
-
   /**
    * TMC2208/TMC2209 stepper drivers
    *  It seems to work perfectly fine on Software Serial, if an advanced user wants to test, you could use the SAMD51 Serial1 and Serial 2. Be careful with the Sercom configurations.
@@ -653,7 +633,32 @@
   //#define E0_HARDWARE_SERIAL Serial1
   //#define E1_HARDWARE_SERIAL Serial2
 
-  #define TMC_BAUD_RATE 250000
+  // Default TMC slave addresses
+  #ifndef X_SLAVE_ADDRESS
+    #define X_SLAVE_ADDRESS                  0
+  #endif
+  #ifndef Y_SLAVE_ADDRESS
+    #define Y_SLAVE_ADDRESS                  1
+  #endif
+  #ifndef Z_SLAVE_ADDRESS
+    #define Z_SLAVE_ADDRESS                  2
+  #endif
+  #ifndef E0_SLAVE_ADDRESS
+    #define E0_SLAVE_ADDRESS                 3
+  #endif
+  #ifndef E1_SLAVE_ADDRESS
+    #define E1_SLAVE_ADDRESS                 0
+  #endif
+  static_assert(X_SLAVE_ADDRESS == 0, "X_SLAVE_ADDRESS must be 0 for BOARD_BRICOLEMON_V1_0.");
+  static_assert(Y_SLAVE_ADDRESS == 1, "Y_SLAVE_ADDRESS must be 1 for BOARD_BRICOLEMON_V1_0.");
+  static_assert(Z_SLAVE_ADDRESS == 2, "Z_SLAVE_ADDRESS must be 2 for BOARD_BRICOLEMON_V1_0.");
+  static_assert(E0_SLAVE_ADDRESS == 3, "E0_SLAVE_ADDRESS must be 3 for BOARD_BRICOLEMON_V1_0.");
+  static_assert(E1_SLAVE_ADDRESS == 0, "E1_SLAVE_ADDRESS must be 0 for BOARD_BRICOLEMON_V1_0.");
+
+  // Reduce baud rate to improve software serial reliability
+  #ifndef TMC_BAUD_RATE
+    #define TMC_BAUD_RATE                  19200 // 250000
+  #endif
 
   //
   // Software serial

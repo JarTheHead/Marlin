@@ -30,8 +30,8 @@
 
 #if NO_EEPROM_SELECTED
   #define FLASH_EEPROM_EMULATION
-  #define EEPROM_PAGE_SIZE      (0x800) // 2K
-  #define EEPROM_START_ADDRESS  (0x08000000 + (STM32_FLASH_SIZE) * 1024 - 2 * EEPROM_PAGE_SIZE)
+  #define EEPROM_PAGE_SIZE                0x800U  // 2K
+  #define EEPROM_START_ADDRESS (0x8000000UL + (STM32_FLASH_SIZE) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
   #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2K
 #endif
 
@@ -190,6 +190,7 @@
   #define Z2_DIR_PIN                        PD0
 #endif
 
+// TODO: Use different pin names for auto-remapping
 #ifdef OPTION_Z2_ENDSTOP
   #define Z2_MIN_PIN                        PD1
   #define Z2_MAX_PIN                        PB12
@@ -277,6 +278,7 @@
 //
 // LCD / Controller
 //
+
 #if ENABLED(ZONESTAR_12864LCD)
   #define LCDSCREEN_NAME "ZONESTAR LCD12864"
   #define LCD_PINS_RS                EXP1_03_PIN  // 7 CS make sure for zonestar zm3e4!

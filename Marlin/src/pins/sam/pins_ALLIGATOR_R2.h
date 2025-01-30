@@ -121,7 +121,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  77  // PA28
+#define SD_SS_PIN                             77  // PA28
 #define SD_DETECT_PIN                         87  // PA29
 #define LED_RED_PIN                           40  // PC8
 #define LED_GREEN_PIN                         41  // PC9
@@ -148,12 +148,12 @@
 //
 // LCD / Controller
 //
+
 #if IS_RRD_FG_SC
   #define LCD_PINS_RS                         18
   #define LCD_PINS_EN                         15
   #define LCD_PINS_D4                         19
   #define BEEPER_PIN                          64
-  #undef UI_VOLTAGE_LEVEL
   #define UI_VOLTAGE_LEVEL                     1
 #endif
 

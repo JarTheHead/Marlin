@@ -30,8 +30,8 @@
 
 #if NO_EEPROM_SELECTED
   #define FLASH_EEPROM_EMULATION
-  #define EEPROM_PAGE_SIZE      (0x800) // 2K
-  #define EEPROM_START_ADDRESS  (0x08000000 + (STM32_FLASH_SIZE) * 1024 - 2 * EEPROM_PAGE_SIZE)
+  #define EEPROM_PAGE_SIZE                0x800U  // 2K
+  #define EEPROM_START_ADDRESS (0x8000000UL + (STM32_FLASH_SIZE) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
   #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2K
 #endif
 
@@ -205,7 +205,7 @@
   #define BOARD_ST7920_DELAY_2               200
   #define BOARD_ST7920_DELAY_3               125
 
-#elif EITHER(ZONESTAR_12864OLED, ZONESTAR_12864OLED_SSD1306)
+#elif ANY(ZONESTAR_12864OLED, ZONESTAR_12864OLED_SSD1306)
 
   //================================================================================
   // OLED 128x64

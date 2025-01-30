@@ -30,8 +30,8 @@
 
 #if NO_EEPROM_SELECTED
   #define FLASH_EEPROM_EMULATION
-  #define EEPROM_PAGE_SIZE      (0x800) // 2K
-  #define EEPROM_START_ADDRESS  (0x08000000 + (STM32_FLASH_SIZE) * 1024 - 2 * EEPROM_PAGE_SIZE)
+  #define EEPROM_PAGE_SIZE                0x800U  // 2K
+  #define EEPROM_START_ADDRESS (0x8000000UL + (STM32_FLASH_SIZE) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
   #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2K
 #endif
 
@@ -156,6 +156,7 @@
 #define Y_MAX_PIN                           PB14
 #define Z_MAX_PIN                           PB13
 
+// TODO: Use different pin names for auto-remapping
 #ifdef OPTION_Z2_ENDSTOP
   #define Z2_MIN_PIN                        PD1
   #define Z2_MAX_PIN                        PB12
